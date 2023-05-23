@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:safe_droid/screens/analyse_static.dart';
+import 'package:safe_droid/screens/accueil.dart';
 
 void main() {
   runApp(const MainApp());
@@ -13,7 +13,7 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Static(),
+        body: Accueil(),
       ),
     );
   }
