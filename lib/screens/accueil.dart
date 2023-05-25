@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
@@ -11,35 +14,35 @@ class Accueil extends StatefulWidget {
 }
 
 class _AccueilState extends State<Accueil> {
-  // String? _fileName;
-  // PlatformFile? pickedfile;
-  // bool isLoading = false;
-  // File? fileToDisplay;
-  // FilePickerResult? result;
+  String? _fileName;
+  PlatformFile? pickedfile;
+  bool isLoading = false;
+  File? fileToDisplay;
+  FilePickerResult? result;
 
-  // void pickFile() async {
-  //   try {
-  //     setState(() {
-  //       isLoading = true;
-  //     });
+  void pickFile() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
 
-  //     result = await FilePicker.platform.pickFiles(
-  //       type: FileType.any,
-  //       allowMultiple: false,
-  //     );
-  //     if (result != null) {
-  //       _fileName = result!.files.first.name;
-  //       pickedfile = result!.files.first;
-  //       fileToDisplay = File(pickedfile!.path.toString());
-  //       print("Fichier : $_fileName");
-  //     }
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //   } catch (e) {
-  //     print(e.toString());
-  //   }
-  // }
+      result = await FilePicker.platform.pickFiles(
+        type: FileType.any,
+        allowMultiple: false,
+      );
+      if (result != null) {
+        _fileName = result!.files.first.name;
+        pickedfile = result!.files.first;
+        fileToDisplay = File(pickedfile!.path.toString());
+        print("Fichier : $_fileName");
+      }
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 
   void _showModalSheet(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -74,7 +77,7 @@ class _AccueilState extends State<Accueil> {
                           ? Text("Wait")
                           : TextButton(
                               onPressed: () {
-                                // pickFile();
+                                pickFile();
                               },
                               child: Text("Get File")),
                     ),
@@ -111,10 +114,10 @@ class _AccueilState extends State<Accueil> {
                           AppInfo app = snapshot.data![index];
                           return Card(
                             child: CheckboxListTile(
-                              onChanged: (value) {
-                                // bool? isSystemApp =
-                                //     await InstalledApps.isSystemApp(
-                                //         app.packageName!);
+                              onChanged: (value) async {
+                                bool? isSystemApp =
+                                    await InstalledApps.isSystemApp(
+                                        app.packageName!);
                                 // FlutterAppBadger.updateBadgeCount(1);
                                 // print("Une application system : $isSystemApp");
                               },

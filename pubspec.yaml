@@ -18,6 +18,7 @@ dependencies:
   # Spinner de chargement
   flutter_spinkit: ^5.2.0
   # Selection de fichier
+  file_picker: ^5.3.0
   # Floating Button
   #animated_floating_buttons: ^0.0.2
   # Notification Badge
