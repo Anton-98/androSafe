@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:installed_apps/app_info.dart';
@@ -20,6 +21,7 @@ class _AccueilState extends State<Accueil> {
   bool isLoading = false;
   File? fileToDisplay;
   FilePickerResult? result;
+  String baseURL = 'http://127.0.0.1:8000/api/v1';
 
   pickFile() async {
     try {
@@ -47,6 +49,41 @@ class _AccueilState extends State<Accueil> {
     } catch (e) {}
   }
 
+  Future<void> uploadApk() async {
+    final Uri uploadUrl = Uri.parse('http://localhost:8000/api/v1/upload/');
+
+    var request = http.MultipartRequest("POST", uploadUrl);
+    // request.headers['Authorization'] =
+    //     "56db51b8127e7fc7fc52aa4b639c0d34d2b30131c57893616246834b9dcdfc5a";
+
+    Map<String, String> requestHeaders = {
+      'Content-type': 'multipart/form-data',
+      'Accept': 'application/json',
+      'Authorization':
+          '56db51b8127e7fc7fc52aa4b639c0d34d2b30131c57893616246834b9dcdfc5a'
+    };
+    var stream = http.ByteStream(fileToDisplay!.openRead());
+    stream.cast();
+
+    var length = await fileToDisplay!.length();
+
+    var apk = http.MultipartFile("file", stream, length);
+
+    request.files.add(apk);
+    request.headers.addAll(requestHeaders);
+    print("object");
+
+    final response = await request.send();
+
+    //var responseData = await response.stream.toBytes();
+
+    if (response.statusCode == 200) {
+      print("Success");
+    } else {
+      print("Error");
+    }
+  }
+
   _showModalSheet(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     showModalBottomSheet(
@@ -68,7 +105,7 @@ class _AccueilState extends State<Accueil> {
                 clipBehavior: Clip.none,
                 children: [
                   Positioned(
-                    top: -12,
+                    top: -13,
                     height: 7,
                     child: Container(
                       width: size.width * 0.47,
@@ -151,7 +188,65 @@ class _AccueilState extends State<Accueil> {
                       ),
                       if (pickedfile != null)
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+/*
+ request.headers['Authorization'] =
+                                "56db51b8127e7fc7fc52aa4b639c0d34d2b30131c57893616246834b9dcdfc5a";
+                            request.headers['Content-type'] =
+                                'multipart/form-data';
+                            request.headers['Accept'] =
+                                'application/json; charset=utf-8';
+*/
+
+                            FormData fichier =
+                                FormData.fromMap({"file": fileToDisplay});
+
+                            final Dio dio = Dio();
+
+                            Response respons = await dio.post(
+                                "http://10.0.2.2:8000/api/v1/upload",
+                                data: fichier,
+                                options: Options(headers: {
+                                  "Accept": "*/*",
+                                  "Authorization":
+                                      "56db51b8127e7fc7fc52aa4b639c0d34d2b30131c57893616246834b9dcdfc5a",
+                                  'Content-type': 'multipart/form-data',
+                                }));
+
+                            final Uri uploadUrl =
+                                Uri.parse('http://10.0.2.2:8000/api/v1/upload');
+
+                            var request =
+                                http.MultipartRequest("POST", uploadUrl);
+
+                            Map<String, dynamic> requestHeaders = {
+                              'Content-type ': 'multipart/form-data',
+                              'Accept ': 'application/json',
+                              'Authorization ':
+                                  '56db51b8127e7fc7fc52aa4b639c0d34d2b30131c57893616246834b9dcdfc5a'
+                            };
+                            var stream =
+                                http.ByteStream(fileToDisplay!.openRead());
+                            stream.cast();
+
+                            var length = await fileToDisplay!.length();
+
+                            var apk =
+                                http.MultipartFile("file", stream, length);
+
+                            request.files.add(apk);
+                            // request.headers.addAll(requestHeaders);
+
+                            final response = await request.send();
+
+                            //var responseData = await response.stream.toBytes();
+
+                            if (respons.statusCode == 200) {
+                              print("Success");
+                            } else {
+                              print(respons.statusCode);
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             minimumSize:
                                 Size(size.width - 45, size.width * 0.12),
@@ -231,4 +326,36 @@ class _AccueilState extends State<Accueil> {
       ),
     );
   }
+}
+
+Future<void> uploadFile(File file) async {
+  var request = http.MultipartRequest(
+      'POST', Uri.parse("http://10.0.2.2:8000/api/v1/upload"));
+
+  var fileStream = http.ByteStream(file.openRead());
+  var length = await file.length();
+  var multipartFile =
+      http.MultipartFile('file', fileStream, length, filename: file.path);
+  request.headers["Authorization"] =
+      '56db51b8127e7fc7fc52aa4b639c0d34d2b30131c57893616246834b9dcdfc5a';
+  request.headers["Content-Type"] = ' multipart/form-data';
+  request.headers["Content-Type"] = 'application/octet-stream';
+  request.headers["Content-Disposition"] = 'application/octet-stream';
+
+  request.files.add(multipartFile);
+
+  var response = await request.send();
+
+  if (response.statusCode == 200) {
+    print("sucess");
+  } else {
+    print("error");
+  }
+/*
+  var doi = Dio();
+
+  FormData data = FormData.fromMap({
+    "Autorization":
+        "56db51b8127e7fc7fc52aa4b639c0d34d2b30131c57893616246834b9dcdfc5a",
+  });*/
 }

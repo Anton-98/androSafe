@@ -1,19 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-class Static extends StatelessWidget {
-  const Static({super.key});
+class StaticAnalyseService {
+  var uri = Uri.parse("http://localhost:8000/api/v1/");
 
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return Column(
-      children: [
-        SizedBox(
-          height: size.height * 0.5,
-          width: size.width,
-        ),
-        Text("data")
-      ],
-    );
-  }
+  // var request = new http.MultipartRequest("POST", uri);
 }
