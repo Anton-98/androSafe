@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:installed_apps/app_info.dart';
 import 'package:installed_apps/installed_apps.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:dotted_border/dotted_border.dart';
 
 class Accueil extends StatefulWidget {
   const Accueil({super.key});
@@ -20,31 +21,33 @@ class _AccueilState extends State<Accueil> {
   File? fileToDisplay;
   FilePickerResult? result;
 
-  void pickFile() async {
+  pickFile() async {
     try {
       setState(() {
         isLoading = true;
       });
-
-      result = await FilePicker.platform.pickFiles(
-        type: FileType.any,
+      FilePickerResult? resul = await FilePicker.platform.pickFiles(
         allowMultiple: false,
+        type: FileType.custom,
+        allowedExtensions: ['apk', 'xapk'],
       );
-      if (result != null) {
-        _fileName = result!.files.first.name;
-        pickedfile = result!.files.first;
-        fileToDisplay = File(pickedfile!.path.toString());
-        print("Fichier : $_fileName");
+      if (resul != null) {
+        _fileName = resul.files.first.name;
+        pickedfile = resul.files.first;
+        fileToDisplay = File(resul.files.first.path.toString());
+        print(pickedfile?.extension);
+        setState(() {
+          isLoading = true;
+        });
+        // print("Fichier details $_fileName, $pickedfile");
       }
       setState(() {
         isLoading = false;
       });
-    } catch (e) {
-      print(e.toString());
-    }
+    } catch (e) {}
   }
 
-  void _showModalSheet(BuildContext context) {
+  _showModalSheet(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     showModalBottomSheet(
       context: context,
@@ -52,36 +55,124 @@ class _AccueilState extends State<Accueil> {
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
         top: Radius.circular(20),
-        bottom: Radius.circular(20),
       )),
       builder: (context) => DraggableScrollableSheet(
         expand: false,
-        initialChildSize: 0.6,
+        initialChildSize: 0.8,
         maxChildSize: 0.8,
-        minChildSize: 0.4,
+        minChildSize: 0.7,
         builder: ((context, scrollController) => SingleChildScrollView(
               controller: scrollController,
               child: Stack(
+                alignment: Alignment.center,
                 clipBehavior: Clip.none,
                 children: [
                   Positioned(
+                    top: -12,
+                    height: 7,
                     child: Container(
-                      width: 60,
-                      height: 7,
-                      color: Colors.white,
+                      width: size.width * 0.47,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                  Container(
-                    child: Center(
-                      child: true
-                          ? Text("Wait")
-                          : TextButton(
-                              onPressed: () {
-                                pickFile();
-                              },
-                              child: Text("Get File")),
-                    ),
-                  )
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      const Text(
+                        "Selectionner une application à analyser",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 6,
+                      ),
+                      pickedfile != null
+                          ? Text(
+                              _fileName.toString(),
+                              style: TextStyle(
+                                color: Colors.blue.shade400,
+                                fontSize: 24,
+                              ),
+                            )
+                          : GestureDetector(
+                              onTap: pickFile,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 40.0,
+                                  vertical: 20.0,
+                                ),
+                                child: DottedBorder(
+                                  borderType: BorderType.RRect,
+                                  radius: const Radius.circular(10),
+                                  dashPattern: const [10, 4],
+                                  strokeCap: StrokeCap.round,
+                                  color: Colors.blue.shade400,
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.blue.shade50.withOpacity(.3),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.folder_outlined,
+                                          color: Colors.blue,
+                                          size: 40,
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                        Text(
+                                          "Select l'application à analyser",
+                                          style: TextStyle(
+                                              fontSize: 15, color: Colors.grey),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                      const SizedBox(
+                        height: 6,
+                      ),
+                      if (pickedfile != null)
+                        ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            minimumSize:
+                                Size(size.width - 45, size.width * 0.12),
+                            backgroundColor: Colors.amber,
+                            elevation: 0,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(50),
+                              ),
+                            ),
+                          ),
+                          child: const Text(
+                            "Analyser",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ],
               ),
             )),
@@ -114,13 +205,7 @@ class _AccueilState extends State<Accueil> {
                           AppInfo app = snapshot.data![index];
                           return Card(
                             child: CheckboxListTile(
-                              onChanged: (value) async {
-                                bool? isSystemApp =
-                                    await InstalledApps.isSystemApp(
-                                        app.packageName!);
-                                // FlutterAppBadger.updateBadgeCount(1);
-                                // print("Une application system : $isSystemApp");
-                              },
+                              onChanged: (value) {},
                               title: Text(app.name!),
                               subtitle: Text(app.packageName!),
                               secondary: Image.memory(app.icon!),
