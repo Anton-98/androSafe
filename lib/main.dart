@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:safe_droid/screens/accueil.dart';
+import 'package:safe_droid/components/constantes.dart';
+import 'package:safe_droid/screens/home.dart';
+import 'package:safe_droid/screens/sidebar.dart';
 
 void main() {
   runApp(const MainApp());
@@ -10,11 +12,19 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Accueil(),
+      theme: ThemeData(
+        primaryColor: cBleuClair,
+        textTheme: Theme.of(context).textTheme.apply(bodyColor: cBleuClair),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      home: const Scaffold(
+        body: Home(),
+      ),
+      routes: {
+        '/menu': (_) => const Menu(),
+      },
     );
   }
 }
