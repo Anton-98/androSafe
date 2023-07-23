@@ -28,7 +28,7 @@ class Menu extends StatelessWidget {
                 ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 Icon(
                   Icons.arrow_back_ios,
                   size: 36,
