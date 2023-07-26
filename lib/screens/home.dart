@@ -5,7 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:safe_droid/components/constantes.dart';
-import 'package:safe_droid/screens/sidebar.dart';
+
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -35,11 +36,9 @@ class _HomeState extends State<Home> {
         _fileName = resul.files.first.name;
         pickedfile = resul.files.first;
         fileToDisplay = File(resul.files.first.path.toString());
-        print(pickedfile?.extension);
         setState(() {
           isLoading = true;
         });
-        // print("Fichier details $_fileName, $pickedfile");
       }
       setState(() {
         isLoading = false;
@@ -89,23 +88,43 @@ class _HomeState extends State<Home> {
                       const SizedBox(
                         height: 30,
                       ),
-                      const Text(
-                        "Selectionner une application à analyser",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      pickedfile == null
+                          ? const Text(
+                              "Selectionner une application à analyser",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          : const Text(
+                              "Détails",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                       const SizedBox(
-                        height: 6,
+                        height: 18,
                       ),
                       pickedfile != null
-                          ? Text(
-                              _fileName.toString(),
-                              style: const TextStyle(
-                                color: cBleuClair,
-                                fontSize: 24,
-                              ),
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    "Type d'application : ${pickedfile!.extension}"),
+                                const SizedBox(
+                                  height: 18,
+                                ),
+                                Text("Nom application : ${pickedfile!.name} "),
+                                const SizedBox(
+                                  height: 18,
+                                ),
+                                const Text("Type d'analyse : Statique"),
+                                const SizedBox(
+                                  height: 18,
+                                ),
+                              ],
                             )
                           : GestureDetector(
                               onTap: pickFile,
@@ -156,15 +175,47 @@ class _HomeState extends State<Home> {
                       ),
                       if (pickedfile != null)
                         ElevatedButton(
-                          onPressed: () async {},
+                          onPressed: () async {
+                            final client = http.Client();
+
+                            final headers = {
+                              'X-Mobsf-Api-Key':
+                                  'dabbfc1a1f90b18c36f0c9c739156f09b947d79c770db1dfa8fc84650ca4639e'
+                            };
+                            final headers2 = {
+                              'Content-Type': 'multipart/form-data'
+                            };
+                            final request = http.MultipartRequest(
+                              'POST',
+                              Uri.parse('http://10.0.2.2:8000/api/v1/upload'),
+                            );
+
+                            // var len = await fileToDisplay!.length();
+
+                            request.files.add(
+                              http.MultipartFile.fromBytes(
+                                  "file", fileToDisplay!.readAsBytesSync(),
+                                  filename: fileToDisplay?.path),
+                            );
+                            request.headers.addAll(headers);
+                            request.headers.addAll(headers2);
+
+                            final response = await client.send(request);
+
+                            if (response.statusCode == 200) {
+                              print(response.contentLength);
+                            } else {
+                              print("Erreur ${response.reasonPhrase}");
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             minimumSize:
-                                Size(size.width - 45, size.width * 0.12),
-                            backgroundColor: Colors.amber,
+                                Size(size.width * 0.5, size.height * 0.07),
+                            backgroundColor: cBleuFonce,
                             elevation: 0,
                             shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(
-                                Radius.circular(50),
+                                Radius.circular(10),
                               ),
                             ),
                           ),
@@ -193,7 +244,13 @@ class _HomeState extends State<Home> {
         backgroundColor: cBleuFonce,
         elevation: 0,
         leading: IconButton(
-          icon: SvgPicture.asset("assets/icons/menu.svg"),
+          icon: SvgPicture.asset(
+            "assets/icons/menu.svg",
+            colorFilter: const ColorFilter.mode(
+              cBlanc,
+              BlendMode.srcIn,
+            ),
+          ),
           onPressed: () {
             Navigator.of(context).pushNamed("/menu");
           },
