@@ -71,7 +71,7 @@ class _AccueilState extends State<Accueil> {
 
     request.files.add(apk);
     request.headers.addAll(requestHeaders);
-    print("object");
+   
 
     final response = await request.send();
 

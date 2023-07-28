@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:safe_droid/components/constantes.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:safe_droid/components/notification.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -48,6 +51,11 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
     super.initState();
   }
 
@@ -177,35 +185,81 @@ class _HomeState extends State<Home> {
                         ElevatedButton(
                           onPressed: () async {
                             final client = http.Client();
-
                             final headers = {
                               'X-Mobsf-Api-Key':
                                   'dabbfc1a1f90b18c36f0c9c739156f09b947d79c770db1dfa8fc84650ca4639e'
                             };
-                            final headers2 = {
-                              'Content-Type': 'multipart/form-data'
-                            };
+
                             final request = http.MultipartRequest(
-                              'POST',
-                              Uri.parse('http://10.0.2.2:8000/api/v1/upload'),
-                            );
+                                'POST',
+                                Uri.parse(
+                                    'http://10.0.2.2:8000/api/v1/upload'));
 
-                            // var len = await fileToDisplay!.length();
+                            request.files.add(http.MultipartFile.fromBytes(
+                                "file", fileToDisplay!.readAsBytesSync(),
+                                filename: fileToDisplay?.path));
 
-                            request.files.add(
-                              http.MultipartFile.fromBytes(
-                                  "file", fileToDisplay!.readAsBytesSync(),
-                                  filename: fileToDisplay?.path),
-                            );
                             request.headers.addAll(headers);
-                            request.headers.addAll(headers2);
-
                             final response = await client.send(request);
 
                             if (response.statusCode == 200) {
-                              print(response.contentLength);
+                              var responseByte =
+                                  await response.stream.toBytes();
+                              var responseString = utf8.decode(responseByte);
+                              var data = jsonDecode(responseString);
+
+                              final parameters = {
+                                'scan_type': data["scan_type"],
+                                'file_name': data["file_name"],
+                                'hash': data["hash"],
+                                're_scan': '0',
+                              };
+                              print("Analyse statique");
+                              final responses = await client.post(
+                                  Uri.parse('http://10.0.2.2:8000/api/v1/scan'),
+                                  body: parameters,
+                                  headers: headers);
+
+                              // String hash = data["hash"];
+                              // String scanType = data["scan_type"];
+                              // String fileName = data["file_name"];
+                              // String reScan = '0';
+                              var dat = jsonDecode(responses.body);
+
+                              var securityScore =
+                                  dat["appsec"]["security_score"];
+
+                              if (securityScore < 50) {
+                                NotificationService.showNotification(
+                                    titre: "Analyse terminée",
+                                    summary: "Analyse Statique",
+                                    payload: {'navigate': 'true'},
+                                    actionButtons: [
+                                      NotificationActionButton(
+                                          key: 'check',
+                                          label: "Voir resultat",
+                                          actionType: ActionType.SilentAction,
+                                          color: cBleuFonce)
+                                    ],
+                                    body:
+                                        "L'application $_fileName est malvaillante");
+                              }
+                              print(
+                                  "Version ${dat['manifest_analysis']["manifest_summary"]}");
                             } else {
-                              print("Erreur ${response.reasonPhrase}");
+                              NotificationService.showNotification(
+                                  titre: "Analyse terminée",
+                                  summary: "Analyse Statique",
+                                  payload: {'navigate': 'true'},
+                                  actionButtons: [
+                                    NotificationActionButton(
+                                        key: 'check',
+                                        label: "Voir resultat",
+                                        actionType: ActionType.SilentAction,
+                                        color: cBleuFonce)
+                                  ],
+                                  body:
+                                      "L'analyse de l'application $_fileName s'est mal terminée!!!");
                             }
                           },
                           style: ElevatedButton.styleFrom(

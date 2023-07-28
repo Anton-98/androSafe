@@ -14,7 +14,10 @@ dependencies:
   # Liste application installées
   installed_apps: ^1.3.1
   dio: ^5.2.1+1
+  # Gestion Icon
   flutter_svg: ^2.0.7
+  # Notification
+  awesome_notifications: ^0.7.4+1
   # Ecoute des Intents
   #android_intent_plus: ^3.1.9
   # Link API rest
