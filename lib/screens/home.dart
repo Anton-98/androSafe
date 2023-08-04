@@ -243,8 +243,22 @@ class _HomeState extends State<Home> {
                                     ],
                                     body:
                                         "L'application $_fileName est malvaillante");
+                              } else {
+                                NotificationService.showNotification(
+                                    titre: "Analyse terminée",
+                                    summary: "Analyse Statique",
+                                    payload: {'navigate': 'true'},
+                                    actionButtons: [
+                                      NotificationActionButton(
+                                          key: 'check',
+                                          label: "Voir resultat",
+                                          actionType: ActionType.SilentAction,
+                                          color: cBleuFonce)
+                                    ],
+                                    body:
+                                        "L'application $_fileName est malvaillante");
                               }
-                              print(
+                              debugPrint(
                                   "Version ${dat['manifest_analysis']["manifest_summary"]}");
                             } else {
                               NotificationService.showNotification(

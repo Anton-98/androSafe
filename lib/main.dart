@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safe_droid/components/constantes.dart';
 import 'package:safe_droid/components/notification.dart';
+import 'package:safe_droid/screens/afterAnalyse.dart';
 import 'package:safe_droid/screens/home.dart';
 import 'package:safe_droid/screens/sidebar.dart';
 
@@ -27,6 +28,7 @@ class MainApp extends StatelessWidget {
       ),
       routes: {
         '/menu': (_) => const Menu(),
+        '': (_) => const Affichage(),
       },
     );
   }

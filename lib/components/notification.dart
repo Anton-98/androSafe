@@ -2,7 +2,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:safe_droid/components/constantes.dart';
 import 'package:safe_droid/main.dart';
-import 'package:safe_droid/screens/sidebar.dart';
+import 'package:safe_droid/screens/afterAnalyse.dart';
 
 class NotificationService {
   static Future<void> initializeNotification() async {
@@ -62,7 +62,7 @@ class NotificationService {
     final payload = receivedAction.payload ?? {};
     if (payload['navigate'] == 'true') {
       MainApp.navigatorKey.currentState?.push(MaterialPageRoute(
-        builder: (_) => const Menu(),
+        builder: (_) => const Affichage(),
       ));
     }
   }
