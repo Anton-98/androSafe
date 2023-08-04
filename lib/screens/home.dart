@@ -185,15 +185,10 @@ class _HomeState extends State<Home> {
                         ElevatedButton(
                           onPressed: () async {
                             final client = http.Client();
-                            final headers = {
-                              'X-Mobsf-Api-Key':
-                                  'dabbfc1a1f90b18c36f0c9c739156f09b947d79c770db1dfa8fc84650ca4639e'
-                            };
+                            final headers = {'X-Mobsf-Api-Key': apiKey};
 
                             final request = http.MultipartRequest(
-                                'POST',
-                                Uri.parse(
-                                    'http://10.0.2.2:8000/api/v1/upload'));
+                                'POST', Uri.parse('$baseURL/upload'));
 
                             request.files.add(http.MultipartFile.fromBytes(
                                 "file", fileToDisplay!.readAsBytesSync(),
