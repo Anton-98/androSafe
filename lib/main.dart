@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:safe_droid/components/background_service.dart';
 import 'package:safe_droid/components/constantes.dart';
 import 'package:safe_droid/components/notification.dart';
 import 'package:safe_droid/screens/afterAnalyse.dart';
@@ -7,6 +10,13 @@ import 'package:safe_droid/screens/sidebar.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Permission.notification.isDenied.then(
+    (value) => {
+      if (value) {Permission.notification.request()}
+    },
+  );
+  await initializeService();
+
   await NotificationService.initializeNotification();
   runApp(const MainApp());
 }
