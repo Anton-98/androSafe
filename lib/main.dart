@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:safe_droid/components/background_service.dart';
 import 'package:safe_droid/components/constantes.dart';
@@ -12,7 +11,10 @@ main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Permission.notification.isDenied.then(
     (value) => {
-      if (value) {Permission.notification.request()}
+      if (value)
+        {
+          Permission.notification.request(),
+        }
     },
   );
   await initializeService();

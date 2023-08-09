@@ -30,12 +30,12 @@ void onStart(ServiceInstance service) async {
   service.on('stopServie').listen((event) {
     service.stopSelf();
   });
-  int i = 0;
-  Timer.periodic(const Duration(seconds: 2), (timer) async {
+
+  Timer.periodic(const Duration(seconds: 1), (timer) async {
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {
-        // service.setForegroundNotificationInfo(
-        //     title: "Pass", content: "Foreground $i");
+        service.setForegroundNotificationInfo(
+            title: "Analyse", content: "Analyse Statique en cours");
       }
     }
 
