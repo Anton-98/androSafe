@@ -38,9 +38,9 @@ void onStart(ServiceInstance service) async {
             title: "Analyse", content: "Analyse Statique en cours");
       }
     }
-
     print("En cours ");
     print("Background Service running");
+
     service.invoke("update");
   });
 }

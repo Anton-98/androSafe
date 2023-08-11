@@ -17,8 +17,8 @@ main() async {
         }
     },
   );
-  await initializeService();
 
+  await initializeService();
   await NotificationService.initializeNotification();
   runApp(const MainApp());
 }
