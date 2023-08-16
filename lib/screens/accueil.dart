@@ -37,7 +37,7 @@ class _AccueilState extends State<Accueil> {
         _fileName = resul.files.first.name;
         pickedfile = resul.files.first;
         fileToDisplay = File(resul.files.first.path.toString());
-        print(pickedfile?.extension);
+
         setState(() {
           isLoading = true;
         });
@@ -71,17 +71,13 @@ class _AccueilState extends State<Accueil> {
 
     request.files.add(apk);
     request.headers.addAll(requestHeaders);
-   
 
     final response = await request.send();
 
     //var responseData = await response.stream.toBytes();
 
     if (response.statusCode == 200) {
-      print("Success");
-    } else {
-      print("Error");
-    }
+    } else {}
   }
 
   _showModalSheet(BuildContext context) {
@@ -242,10 +238,7 @@ class _AccueilState extends State<Accueil> {
                             //var responseData = await response.stream.toBytes();
 
                             if (respons.statusCode == 200) {
-                              print("Success");
-                            } else {
-                              print(respons.statusCode);
-                            }
+                            } else {}
                           },
                           style: ElevatedButton.styleFrom(
                             minimumSize:
@@ -347,10 +340,7 @@ Future<void> uploadFile(File file) async {
   var response = await request.send();
 
   if (response.statusCode == 200) {
-    print("sucess");
-  } else {
-    print("error");
-  }
+  } else {}
 /*
   var doi = Dio();
 

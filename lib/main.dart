@@ -3,8 +3,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:safe_droid/components/background_service.dart';
 import 'package:safe_droid/components/constantes.dart';
 import 'package:safe_droid/components/notification.dart';
+import 'package:safe_droid/components/splash.dart';
 import 'package:safe_droid/screens/afterAnalyse.dart';
-import 'package:safe_droid/screens/home.dart';
 import 'package:safe_droid/screens/sidebar.dart';
 
 main() async {
@@ -36,7 +36,7 @@ class MainApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const Scaffold(
-        body: Home(),
+        body: Splash(),
       ),
       routes: {
         '/menu': (_) => const Menu(),

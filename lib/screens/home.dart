@@ -209,7 +209,6 @@ class _HomeState extends State<Home> {
                                 'hash': data["hash"],
                                 're_scan': '0',
                               };
-                              print("Analyse statique");
                               final responses = await client.post(
                                   Uri.parse('http://10.0.2.2:8000/api/v1/scan'),
                                   body: parameters,
