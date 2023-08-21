@@ -29,6 +29,8 @@ class _HomeState extends State<Home> {
     try {
       setState(() {
         isLoading = true;
+
+        pickedfile != null;
       });
       FilePickerResult? resul = await FilePicker.platform.pickFiles(
         allowMultiple: false,
@@ -41,10 +43,12 @@ class _HomeState extends State<Home> {
         fileToDisplay = File(resul.files.first.path.toString());
         setState(() {
           isLoading = true;
+          pickedfile != null;
         });
       }
       setState(() {
         isLoading = false;
+        pickedfile != null;
       });
     } catch (e) {}
   }
@@ -214,10 +218,6 @@ class _HomeState extends State<Home> {
                                   body: parameters,
                                   headers: headers);
 
-                              // String hash = data["hash"];
-                              // String scanType = data["scan_type"];
-                              // String fileName = data["file_name"];
-                              // String reScan = '0';
                               var dat = jsonDecode(responses.body);
 
                               var securityScore =

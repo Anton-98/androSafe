@@ -1,7 +1,7 @@
 name: safe_droid
 description: Middleware de detection de malware sur la plateform Android.
 publish_to: "none"
-version: 0.1.0
+version: 1.0.0
 
 environment:
   sdk: ">=3.0.0-348.0.dev <4.0.0"
@@ -11,6 +11,10 @@ dependencies:
     sdk: flutter
   # Bordure pointillées
   dotted_border: ^2.0.0+3
+  # Stockage des preferences
+  shared_preferences: ^2.2.0
+  # Recuperation des informations des applications
+  package_info_plus: ^4.1.0
   # Service en backgroud
   flutter_background_service: ^3.0.1
   flutter_background_service_android: ^4.0.2

@@ -28,13 +28,14 @@ class _SplashState extends State<Splash> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: cBlanc,
       body: SizedBox(
         width: double.infinity,
         height: size.height,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/logo.png', width: 300, height: 300),
+            Image.asset('assets/images/andro.png', width: 300, height: 300),
             const SpinKitChasingDots(
               color: cBleuFonce,
               size: 50,

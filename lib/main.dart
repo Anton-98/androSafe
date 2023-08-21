@@ -5,7 +5,8 @@ import 'package:safe_droid/components/constantes.dart';
 import 'package:safe_droid/components/notification.dart';
 import 'package:safe_droid/components/splash.dart';
 import 'package:safe_droid/screens/afterAnalyse.dart';
-import 'package:safe_droid/screens/sidebar.dart';
+import 'package:safe_droid/screens/param.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,7 @@ main() async {
         }
     },
   );
-
+  await SharedPreferences.getInstance();
   await initializeService();
   await NotificationService.initializeNotification();
   runApp(const MainApp());
