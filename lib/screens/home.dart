@@ -5,6 +5,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:safe_droid/components/constantes.dart';
 
@@ -13,6 +14,7 @@ import 'package:safe_droid/components/notification.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   State<Home> createState() => _HomeState();
@@ -25,6 +27,8 @@ class _HomeState extends State<Home> {
   bool isLoading = false;
   File? fileToDisplay;
   FilePickerResult? result;
+  final service = FlutterBackgroundService();
+
   pickFile() async {
     try {
       setState(() {
@@ -188,6 +192,14 @@ class _HomeState extends State<Home> {
                       if (pickedfile != null)
                         ElevatedButton(
                           onPressed: () async {
+                            late double _permission = .0;
+                            late double cerficat = .0;
+                            late double manifest = .0;
+                            late double networkSecurity = .0;
+                            late double codeAnalys = .0;
+                            late double scoreSecu = .0;
+                            late double res = .0;
+
                             final client = http.Client();
                             final headers = {'X-Mobsf-Api-Key': apiKey};
 
@@ -214,16 +226,83 @@ class _HomeState extends State<Home> {
                                 're_scan': '0',
                               };
                               final responses = await client.post(
-                                  Uri.parse('http://10.0.2.2:8000/api/v1/scan'),
+                                  Uri.parse('$baseURL/scan'),
                                   body: parameters,
                                   headers: headers);
 
                               var dat = jsonDecode(responses.body);
+                              // Calcule pourcentage Permission
+                              var permission = dat['permissions'];
+                              Map<String, dynamic> jsonMap =
+                                  jsonDecode(jsonEncode(permission));
+                              late int cont = 0;
+                              jsonMap.forEach((key, value) {
+                                Map<String, dynamic> val =
+                                    jsonDecode(jsonEncode(value));
+                                val.forEach((ke, valu) {
+                                  if (ke == 'status') {
+                                    if (valu == "dangerous") {
+                                      cont++;
+                                    }
+                                  }
+                                });
+                                _permission = (cont / jsonMap.length) * 100;
+                              });
 
+                              // Calcule certificate_analysis
+                              var certificate = dat['certificate_analysis']
+                                  ['certificate_summary'];
+                              cerficat = (certificate['high'] /
+                                      (certificate['high'] +
+                                          certificate['warning'] +
+                                          certificate['info'])) *
+                                  100;
+                              // Calcule manifest_analysis
+                              var manifests =
+                                  dat['manifest_analysis']['manifest_summary'];
+                              manifest = (manifests['high'] /
+                                      (manifests['warning'] +
+                                          manifests['high'] +
+                                          manifests['info'] +
+                                          manifests['suppressed'])) *
+                                  100;
+
+                              // network_security
+                              var networkSecu =
+                                  dat['network_security']['network_summary'];
+                              networkSecurity = (networkSecu['high'] /
+                                      (networkSecu['high'] +
+                                          networkSecu['warning'] +
+                                          networkSecu['info'] +
+                                          networkSecu['secure'])) *
+                                  100;
+                              // code_analysis
+                              var codeAnalysis =
+                                  dat['code_analysis']['summary'];
+                              codeAnalys = (codeAnalysis['high'] /
+                                      (codeAnalysis['high'] +
+                                          codeAnalysis['warning'] +
+                                          codeAnalysis['info'] +
+                                          codeAnalysis['secure'] +
+                                          codeAnalysis['suppressed'])) *
+                                  100;
+
+                              // Securité Score
                               var securityScore =
                                   dat["appsec"]["security_score"];
+                              scoreSecu =
+                                  double.tryParse(securityScore.toString())!;
 
-                              if (securityScore < 50) {
+                              // Final result
+                              res = (_permission +
+                                      cerficat +
+                                      codeAnalys +
+                                      networkSecurity +
+                                      manifest) /
+                                  5;
+                             
+
+                              if (res < 50) {
                                 NotificationService.showNotification(
                                     titre: "Analyse terminée",
                                     summary: "Analyse Statique",
@@ -252,8 +331,6 @@ class _HomeState extends State<Home> {
                                     body:
                                         "L'application $_fileName est malvaillante");
                               }
-                              debugPrint(
-                                  "Version ${dat['manifest_analysis']["manifest_summary"]}");
                             } else {
                               NotificationService.showNotification(
                                   titre: "Analyse terminée",

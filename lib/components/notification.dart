@@ -1,8 +1,8 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:safe_droid/components/constantes.dart';
-import 'package:safe_droid/main.dart';
-import 'package:safe_droid/screens/afterAnalyse.dart';
+import 'package:safe_droid/screens/home.dart';
+import 'package:safe_droid/screens/param.dart';
 
 class NotificationService {
   static Future<void> initializeNotification() async {
@@ -58,12 +58,14 @@ class NotificationService {
 
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
-    debugPrint('onActionReceivedMethod');
     final payload = receivedAction.payload ?? {};
     if (payload['navigate'] == 'true') {
-      MainApp.navigatorKey.currentState?.push(MaterialPageRoute(
-        builder: (_) => const Affichage(),
-      ));
+      Home.navigatorKey.currentState
+          ?.push(MaterialPageRoute(builder: (_) => const Menu()));
+      // MainApp.navigatorKey.currentState?.push(MaterialPageRoute(
+      //   builder: (_) => const Menu(),
+      // ));
+      debugPrint('Ouvrir Page');
     }
   }
 

@@ -39,10 +39,10 @@ class _MenuState extends State<Menu> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: cBlanc,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: cBlanc,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: SvgPicture.asset(
@@ -72,24 +72,26 @@ class _MenuState extends State<Menu> {
             Container(
               alignment: Alignment.topLeft,
               margin: const EdgeInsets.only(left: 12, top: 12, right: 12),
-              child: const Text("Parametres d'Analyse"),
+              child: const Text("Parametres Généraux"),
             ),
             Container(
               alignment: Alignment.topLeft,
               margin: const EdgeInsets.only(left: 12, right: 12, top: 7),
               decoration: BoxDecoration(
-                color: cBleuFonce.withOpacity(0.9),
+                color: cBlanc.withOpacity(1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
                 children: [
                   ListTile(
-                    title: const Text("Analyse Statique Auto"),
+                    title: const Text(
+                      "Analyse Statique Auto",
+                      style: TextStyle(color: cBleuClair),
+                    ),
                     textColor: cBlanc,
                     trailing: Switch(
                       activeColor: cBleuFonce,
-                      activeTrackColor: cBlanc,
-                      inactiveTrackColor: cBleuFonce,
+                      activeTrackColor: cBleuFonce,
                       value: analyseStatique,
                       onChanged: (value) {
                         setState(() {
@@ -102,12 +104,17 @@ class _MenuState extends State<Menu> {
                     ),
                   ),
                   const Divider(
-                    height: 5,
-                    color: cBlanc,
-                    indent: 30,
+                    height: 1,
+                    thickness: 0.7,
+                    endIndent: 12,
+                    color: cBleuFonce,
+                    indent: 12,
                   ),
                   ListTile(
-                    title: const Text("Analyse Dynamique Auto"),
+                    title: const Text(
+                      "Analyse Dynamique Auto",
+                      style: TextStyle(color: cBleuClair),
+                    ),
                     textColor: cBlanc,
                     trailing: Switch(
                       activeColor: cBleuFonce,
@@ -121,9 +128,121 @@ class _MenuState extends State<Menu> {
             Container(
               alignment: Alignment.topLeft,
               margin: const EdgeInsets.only(left: 12, top: 30, right: 12),
-              child: const Text("Conditions et Politiques"),
+              child: const Text(
+                "Conditions et Politiques",
+                style: TextStyle(color: cBleuFonce),
+              ),
             ),
-            Text("$_version ")
+            Container(
+              alignment: Alignment.topLeft,
+              margin: const EdgeInsets.only(left: 12, right: 12, top: 7),
+              decoration: BoxDecoration(
+                color: cBlanc.withOpacity(1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                children: [
+                  ListTile(
+                    title: const Text(
+                      "Politique de Confidentialité",
+                      style: TextStyle(color: cBleuClair),
+                    ),
+                    leading: const Icon(
+                      Icons.security_outlined,
+                      color: cBleuFonce,
+                    ),
+                    textColor: cBlanc,
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.of(context).pushNamed("/politique");
+                    },
+                  ),
+                  const Divider(
+                    height: 1,
+                    thickness: 0.7,
+                    endIndent: 12,
+                    color: cBleuFonce,
+                    indent: 12,
+                  ),
+                  ListTile(
+                    title: const Text(
+                      "Conditions Générales d'Utilisation",
+                      style: TextStyle(color: cBleuClair),
+                    ),
+                    leading: const Icon(
+                      Icons.verified_user_rounded,
+                      color: cBleuFonce,
+                    ),
+                    textColor: cBlanc,
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {},
+                  ),
+                  const Divider(
+                    height: 1,
+                    thickness: 0.7,
+                    endIndent: 12,
+                    color: cBleuFonce,
+                    indent: 12,
+                  ),
+                  ListTile(
+                    title: const Text(
+                      "FAQ",
+                      style: TextStyle(color: cBleuClair),
+                    ),
+                    leading: const Icon(
+                      Icons.question_answer_sharp,
+                      color: cBleuFonce,
+                    ),
+                    textColor: cBlanc,
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {},
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              alignment: Alignment.topLeft,
+              margin: const EdgeInsets.only(left: 12, top: 30, right: 12),
+              child: const Text("A propos"),
+            ),
+            Container(
+              alignment: Alignment.topLeft,
+              margin: const EdgeInsets.only(left: 12, right: 12, top: 7),
+              decoration: BoxDecoration(
+                color: cBlanc.withOpacity(1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                children: [
+                  ListTile(
+                    title: const Text(
+                      "Aide",
+                      style: TextStyle(color: cBleuClair),
+                    ),
+                    textColor: cBlanc,
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.of(context).pushNamed("/aide");
+                    },
+                  ),
+                  const Divider(
+                    height: 1,
+                    thickness: 0.7,
+                    endIndent: 12,
+                    color: cBleuFonce,
+                    indent: 12,
+                  ),
+                  ListTile(
+                    title: const Text(
+                      "Version",
+                      style: TextStyle(color: cBleuClair),
+                    ),
+                    trailing: Text("$_version "),
+                    onTap: () {},
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

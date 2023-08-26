@@ -4,8 +4,9 @@ import 'package:safe_droid/components/background_service.dart';
 import 'package:safe_droid/components/constantes.dart';
 import 'package:safe_droid/components/notification.dart';
 import 'package:safe_droid/components/splash.dart';
-import 'package:safe_droid/screens/afterAnalyse.dart';
 import 'package:safe_droid/screens/param.dart';
+import 'package:safe_droid/screens/param/aide.dart';
+import 'package:safe_droid/screens/param/politique_conf.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 main() async {
@@ -18,9 +19,10 @@ main() async {
         }
     },
   );
+
+  await NotificationService.initializeNotification();
   await SharedPreferences.getInstance();
   await initializeService();
-  await NotificationService.initializeNotification();
   runApp(const MainApp());
 }
 
@@ -41,7 +43,9 @@ class MainApp extends StatelessWidget {
       ),
       routes: {
         '/menu': (_) => const Menu(),
-        '': (_) => const Affichage(),
+        '/aide': (_) => const Aide(),
+        '/politique': (_) => const Politique(),
+        //'': (_) => const Affichage(),
       },
     );
   }

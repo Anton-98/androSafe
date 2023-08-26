@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -31,16 +32,19 @@ void onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
-  Timer.periodic(const Duration(seconds: 1), (timer) async {
+  Timer.periodic(const Duration(seconds: 2), (timer) async {
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {
-        service.setForegroundNotificationInfo(
-            title: "Analyse", content: "Analyse Statique en cours");
+        // service.setForegroundNotificationInfo(
+        //     title: "Analyse", content: "Analyse Statique en cours");
       }
     }
-    print("En cours ");
-    print("Background Service running");
-
+    if (Platform.isAndroid) {
+      // const intent = AndroidIntent(
+      //   action: "",
+      // );
+      // intent.launch();
+    }
     service.invoke("update");
   });
 }
