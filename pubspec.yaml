@@ -11,8 +11,12 @@ dependencies:
     sdk: flutter
   # Bordure pointillées
   dotted_border: ^2.0.0+3
+  badges: ^3.1.2
+  expandable_richtext: 1.0.2
   # Stockage des preferences
   shared_preferences: ^2.2.0
+  sqflite: ^2.3.0
+  intl: ^0.18.1
   # Recuperation des informations des applications
   package_info_plus: ^4.1.0
   # Service en backgroud

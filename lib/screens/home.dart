@@ -11,6 +11,8 @@ import 'package:safe_droid/components/constantes.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:safe_droid/components/notification.dart';
+import 'package:safe_droid/db/db.dart';
+import 'package:safe_droid/models/appli.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -21,12 +23,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Future<List<AppAnalyse>>? futureApp;
+  final appDB = DB();
   // Variable
   String? _fileName;
   PlatformFile? pickedfile;
   bool isLoading = false;
   File? fileToDisplay;
   FilePickerResult? result;
+  int notif = 0;
   final service = FlutterBackgroundService();
 
   pickFile() async {
@@ -49,11 +54,11 @@ class _HomeState extends State<Home> {
           isLoading = true;
           pickedfile != null;
         });
+        setState(() {
+          isLoading = false;
+          pickedfile != null;
+        });
       }
-      setState(() {
-        isLoading = false;
-        pickedfile != null;
-      });
     } catch (e) {}
   }
 
@@ -143,7 +148,10 @@ class _HomeState extends State<Home> {
                               ],
                             )
                           : GestureDetector(
-                              onTap: pickFile,
+                              onTap: () {
+                                pickFile();
+                                Navigator.pop(context);
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 40.0,
@@ -192,7 +200,7 @@ class _HomeState extends State<Home> {
                       if (pickedfile != null)
                         ElevatedButton(
                           onPressed: () async {
-                            late double _permission = .0;
+                            late double permission = .0;
                             late double cerficat = .0;
                             late double manifest = .0;
                             late double networkSecurity = .0;
@@ -232,9 +240,9 @@ class _HomeState extends State<Home> {
 
                               var dat = jsonDecode(responses.body);
                               // Calcule pourcentage Permission
-                              var permission = dat['permissions'];
+                              var permis = dat['permissions'];
                               Map<String, dynamic> jsonMap =
-                                  jsonDecode(jsonEncode(permission));
+                                  jsonDecode(jsonEncode(permis));
                               late int cont = 0;
                               jsonMap.forEach((key, value) {
                                 Map<String, dynamic> val =
@@ -246,7 +254,7 @@ class _HomeState extends State<Home> {
                                     }
                                   }
                                 });
-                                _permission = (cont / jsonMap.length) * 100;
+                                permission = (cont / jsonMap.length) * 100;
                               });
 
                               // Calcule certificate_analysis
@@ -294,14 +302,27 @@ class _HomeState extends State<Home> {
                                   double.tryParse(securityScore.toString())!;
 
                               // Final result
-                              res = (_permission +
+                              res = (permission +
                                       cerficat +
                                       codeAnalys +
                                       networkSecurity +
                                       manifest) /
-                                  5;
-                             
+                                  5.0;
+                              await appDB.create(
+                                appName: dat["app_name"],
+                                url: pickedfile?.path,
+                                version: dat["version"],
+                                certificat: cerficat.roundToDouble(),
+                                manifest: manifest.roundToDouble(),
+                                networkSecu: networkSecurity.roundToDouble(),
+                                codeAnalyst: codeAnalys.roundToDouble(),
+                                scoreSecu: scoreSecu.roundToDouble(),
+                                permission: permission.roundToDouble(),
+                              );
 
+                              setState(() {
+                                notif++;
+                              });
                               if (res < 50) {
                                 NotificationService.showNotification(
                                     titre: "Analyse terminée",
@@ -382,6 +403,26 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         backgroundColor: cBleuFonce,
         elevation: 0,
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              setState(() {
+                notif = 0;
+              });
+              Navigator.of(context).pushNamed("/notifications");
+            },
+            icon: Badge(
+              isLabelVisible: notif == 0 ? false : true,
+              offset: Offset.zero,
+              label: Text(
+                notif.toString(),
+                style: const TextStyle(color: cBlanc),
+              ),
+              alignment: Alignment.topRight,
+              child: const Icon(Icons.notifications),
+            ),
+          )
+        ],
         leading: IconButton(
           icon: SvgPicture.asset(
             "assets/icons/menu.svg",
@@ -429,10 +470,10 @@ class _HomeState extends State<Home> {
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

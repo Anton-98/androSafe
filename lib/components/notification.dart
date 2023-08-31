@@ -4,6 +4,8 @@ import 'package:safe_droid/components/constantes.dart';
 import 'package:safe_droid/screens/home.dart';
 import 'package:safe_droid/screens/param.dart';
 
+import '../main.dart';
+
 class NotificationService {
   static Future<void> initializeNotification() async {
     await AwesomeNotifications().initialize(
@@ -62,9 +64,9 @@ class NotificationService {
     if (payload['navigate'] == 'true') {
       Home.navigatorKey.currentState
           ?.push(MaterialPageRoute(builder: (_) => const Menu()));
-      // MainApp.navigatorKey.currentState?.push(MaterialPageRoute(
-      //   builder: (_) => const Menu(),
-      // ));
+      MainApp.navigatorKey.currentState?.push(MaterialPageRoute(
+        builder: (_) => const Menu(),
+      ));
       debugPrint('Ouvrir Page');
     }
   }
