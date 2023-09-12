@@ -238,6 +238,10 @@ class _NotificationsState extends State<Notifications> {
                               ],
                             ),
                           ),
+                          TextButton.icon(
+                              onPressed: () async {},
+                              icon: const Icon(Icons.install_mobile_outlined),
+                              label: const Text("Installer"))
                         ])
                   ]),
             )),

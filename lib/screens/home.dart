@@ -309,9 +309,10 @@ class _HomeState extends State<Home> {
                                       manifest) /
                                   5.0;
                               await appDB.create(
+                                id: dat['package_name'],
                                 appName: dat["app_name"],
                                 url: pickedfile?.path,
-                                version: dat["version"],
+                                version: dat["version_name"],
                                 certificat: cerficat.roundToDouble(),
                                 manifest: manifest.roundToDouble(),
                                 networkSecu: networkSecurity.roundToDouble(),
@@ -322,6 +323,7 @@ class _HomeState extends State<Home> {
 
                               setState(() {
                                 notif++;
+                                pickedfile = null;
                               });
                               if (res < 50) {
                                 NotificationService.showNotification(

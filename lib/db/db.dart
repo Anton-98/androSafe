@@ -7,7 +7,7 @@ class DB {
 
   Future<void> createTable(Database database) async {
     await database.execute("""CREATE TABLE IF NOT EXISTS $tableName (
-          "id" INTEGER NOT NULL,
+          "id" TEXT NOT NULL,
           "appName" TEXT NOT NULL,
           "url" TEXT,
           "version" TEXT NOT NULL,
@@ -17,11 +17,12 @@ class DB {
           "codeAnalyst" REAL,
           "scoreSecu" REAL,
           "permission" REAL,
-          PRIMARY KEY('id' AUTOINCREMENT)
+          PRIMARY KEY('id')
            );""");
   }
 
   Future<int> create({
+    required String id,
     required String appName,
     String? url,
     required String version,
@@ -34,8 +35,9 @@ class DB {
   }) async {
     final database = await DatabaseService().database;
     return await database.rawInsert("""INSERT INTO $tableName (
-         AppName,url,version,certificat,manifest,networkSecu,codeAnalyst,scoreSecu,permission) 
-         values(?,?,?,?,?,?,?,?,?);""", [
+         id, AppName,url,version,certificat,manifest,networkSecu,codeAnalyst,scoreSecu,permission) 
+         values(?,?,?,?,?,?,?,?,?,?);""", [
+      id,
       appName,
       url,
       version,

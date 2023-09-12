@@ -1,5 +1,5 @@
 class AppAnalyse {
-  final int id;
+  final String id;
   final String appName;
   final String? url;
   final String version;

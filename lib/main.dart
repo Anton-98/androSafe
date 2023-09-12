@@ -36,7 +36,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: cBleuClair,
-        textTheme: Theme.of(context).textTheme.apply(bodyColor: cBleuClair),
+        textTheme: Theme.of(context).textTheme.apply(bodyColor: cBleuFonce),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const Scaffold(
