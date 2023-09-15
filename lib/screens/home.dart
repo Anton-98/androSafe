@@ -5,8 +5,10 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:installed_apps/app_info.dart';
+import 'package:installed_apps/installed_apps.dart';
 import 'package:safe_droid/components/constantes.dart';
 
 import 'package:http/http.dart' as http;
@@ -32,7 +34,6 @@ class _HomeState extends State<Home> {
   File? fileToDisplay;
   FilePickerResult? result;
   int notif = 0;
-  final service = FlutterBackgroundService();
 
   pickFile() async {
     try {
@@ -64,12 +65,12 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    super.initState();
     AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
       if (!isAllowed) {
         AwesomeNotifications().requestPermissionToSendNotifications();
       }
     });
-    super.initState();
   }
 
   _showModalSheet(BuildContext context) {
@@ -325,35 +326,19 @@ class _HomeState extends State<Home> {
                                 notif++;
                                 pickedfile = null;
                               });
-                              if (res < 50) {
-                                NotificationService.showNotification(
-                                    titre: "Analyse terminée",
-                                    summary: "Analyse Statique",
-                                    payload: {'navigate': 'true'},
-                                    actionButtons: [
-                                      NotificationActionButton(
-                                          key: 'check',
-                                          label: "Voir resultat",
-                                          actionType: ActionType.SilentAction,
-                                          color: cBleuFonce)
-                                    ],
-                                    body:
-                                        "L'application $_fileName est malvaillante");
-                              } else {
-                                NotificationService.showNotification(
-                                    titre: "Analyse terminée",
-                                    summary: "Analyse Statique",
-                                    payload: {'navigate': 'true'},
-                                    actionButtons: [
-                                      NotificationActionButton(
-                                          key: 'check',
-                                          label: "Voir resultat",
-                                          actionType: ActionType.SilentAction,
-                                          color: cBleuFonce)
-                                    ],
-                                    body:
-                                        "L'application $_fileName est malvaillante");
-                              }
+                              NotificationService.showNotification(
+                                  titre: "Analyse terminée",
+                                  summary: "Analyse Statique de $_fileName",
+                                  payload: {'navigate': 'true'},
+                                  actionButtons: [
+                                    NotificationActionButton(
+                                        key: 'check',
+                                        label: "Ouvrir",
+                                        actionType: ActionType.Default,
+                                        color: cBleuFonce)
+                                  ],
+                                  body:
+                                      "L'application $_fileName est malvaillante");
                             } else {
                               NotificationService.showNotification(
                                   titre: "Analyse terminée",
@@ -361,10 +346,11 @@ class _HomeState extends State<Home> {
                                   payload: {'navigate': 'true'},
                                   actionButtons: [
                                     NotificationActionButton(
-                                        key: 'check',
-                                        label: "Voir resultat",
-                                        actionType: ActionType.SilentAction,
-                                        color: cBleuFonce)
+                                      key: 'check',
+                                      label: "Voir",
+                                      actionType: ActionType.SilentAction,
+                                      color: cBleuFonce,
+                                    )
                                   ],
                                   body:
                                       "L'analyse de l'application $_fileName s'est mal terminée!!!");
@@ -403,8 +389,56 @@ class _HomeState extends State<Home> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: cBleuFonce,
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        flexibleSpace: Container(
+          padding: EdgeInsets.only(
+            left: size.width * 0.1 - 10,
+            right: size.width * 0.1 - 30,
+            // bottom: size.width * 0.1 - 20,
+          ),
+          decoration: const BoxDecoration(
+            color: cBleuFonce,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(36),
+              bottomRight: Radius.circular(36),
+            ),
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: size * 0.15,
+          child: Stack(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(
+                  left: size.width * 0.1 - 10,
+                  right: size.width * 0.1 - 30,
+                  //  bottom: size.width * 0.1 - 20,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      "AndroSafe",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
+                          ?.copyWith(
+                              color: Colors.white70,
+                              fontWeight: FontWeight.bold),
+                    ),
+                    const Spacer(),
+                    Image.asset(
+                      "assets/images/andro.png",
+                      width: 100,
+                      height: 100,
+                      color: cBlanc,
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
         actions: <Widget>[
           IconButton(
             onPressed: () {
@@ -439,44 +473,49 @@ class _HomeState extends State<Home> {
         ),
       ),
       floatingActionButton: btnAnalyse(context),
-      body: Column(
-        children: <Widget>[
-          Container(
-            height: size.height * 0.2,
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(
-                    left: size.width * 0.1 - 10,
-                    right: size.width * 0.1 - 10,
-                    bottom: size.width * 0.1 - 20,
-                  ),
-                  height: size.height * 0.2 - 27,
-                  decoration: const BoxDecoration(
-                    color: cBleuFonce,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(36),
-                      bottomRight: Radius.circular(36),
+      body: SizedBox(
+        child: FutureBuilder<List<AppInfo>>(
+          future: InstalledApps.getInstalledApps(true, true),
+          builder: (BuildContext buildContext,
+              AsyncSnapshot<List<AppInfo>> snapshot) {
+            return snapshot.connectionState == ConnectionState.done
+                ? snapshot.hasData
+                    ? ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          AppInfo app = snapshot.data![index];
+                          return Card(
+                            color: Colors.grey.shade200,
+                            margin: const EdgeInsets.only(
+                                left: 12, top: 15, bottom: 5, right: 12),
+                            elevation: 0,
+                            borderOnForeground: true,
+                            child: CheckboxListTile(
+                              onChanged: (value) {},
+                              title: Text(app.name!),
+                              subtitle: Text(app.packageName!),
+                              secondary: Image.memory(app.icon!),
+                              value: false,
+                            ),
+                          );
+                        },
+                      )
+                    : const Center(
+                        child: SpinKitRotatingCircle(
+                          color: cBleuFonce,
+                          size: 50,
+                        ),
+                      )
+                : const Center(
+                    child: SpinKitFoldingCube(
+                      color: cBleuFonce,
+                      size: 70,
                     ),
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        "AndroSafe",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(
-                                color: Colors.white70,
-                                fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+                  );
+          },
+        ),
       ),
     );
   }
@@ -485,7 +524,7 @@ class _HomeState extends State<Home> {
     return FloatingActionButton.extended(
       label: const Text("Analyse apk"),
       icon: const Icon(Icons.add),
-      backgroundColor: cBleuClair,
+      backgroundColor: cBleuFonce,
       onPressed: () => _showModalSheet(context),
     );
   }

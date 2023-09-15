@@ -52,7 +52,7 @@ class DB {
 
   Future<List<AppAnalyse>> fetchAll() async {
     final database = await DatabaseService().database;
-    final apps = await database.rawQuery('''SELECT * FROM $tableName ''');
+    final apps = await database.rawQuery('''SELECT * FROM $tableName''');
     return apps.map((app) => AppAnalyse.fromSqfliteDataBase(app)).toList();
   }
 }

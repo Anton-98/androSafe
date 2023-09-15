@@ -43,7 +43,6 @@ dependencies:
   #animated_floating_buttons: ^0.0.2
   # Notification Badge
   #flutter_app_badger: ^1.5.0
-  #android_intent_plus: ^4.0.0
 
 
 dev_dependencies:

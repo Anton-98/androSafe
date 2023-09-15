@@ -274,31 +274,35 @@ class _NotificationsState extends State<Notifications> {
                 : ListView.separated(
                     itemBuilder: (context, index) {
                       final ap = appss[index];
-                      return Dismissible(
-                        background: Container(
-                          color: cBleuFonce,
-                        ),
-                        secondaryBackground: Container(
-                          color: Colors.red,
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 20),
-                          child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'Supprimer',
-                                  style: TextStyle(color: cBlanc),
-                                ),
-                                Icon(Icons.delete)
-                              ]),
-                        ),
-                        key: ValueKey(ap.id),
-                        onDismissed: (DismissDirection direction) {},
-                        direction: DismissDirection.endToStart,
-                        child: ListTile(
-                          title: Text(ap.appName),
-                          subtitle: Text(ap.url!),
-                          onTap: () => _showModalSheet(context, ap),
+                      return Badge(
+                        padding: const EdgeInsets.only(right: 20),
+                        alignment: Alignment.centerRight,
+                        child: Dismissible(
+                          background: Container(
+                            color: cBleuFonce,
+                          ),
+                          secondaryBackground: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.only(right: 20),
+                            child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Supprimer',
+                                    style: TextStyle(color: cBlanc),
+                                  ),
+                                  Icon(Icons.delete)
+                                ]),
+                          ),
+                          key: ValueKey(ap.id),
+                          onDismissed: (DismissDirection direction) {},
+                          direction: DismissDirection.endToStart,
+                          child: ListTile(
+                            title: Text(ap.appName),
+                            subtitle: Text(ap.url!),
+                            onTap: () => _showModalSheet(context, ap),
+                          ),
                         ),
                       );
                     },

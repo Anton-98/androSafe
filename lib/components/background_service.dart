@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 
@@ -39,12 +41,13 @@ void onStart(ServiceInstance service) async {
         //     title: "Analyse", content: "Analyse Statique en cours");
       }
     }
-    if (Platform.isAndroid) {
-      // const intent = AndroidIntent(
-      //   action: "",
-      // );
-      // intent.launch();
-    }
+    // if (Platform.isAndroid) {
+    //   AndroidIntent intent = AndroidIntent(
+    //     action: "android.intent.action.PACKAGE_ADDED",
+    //   );
+    //   intent.launch();
+    // }
+
     service.invoke("update");
   });
 }
